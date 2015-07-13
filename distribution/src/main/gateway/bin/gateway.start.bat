@@ -47,5 +47,18 @@ rem Create the classpath.
 rem Add a directory for management support
 set JAVA_LIBRARY_PATH=%GW_HOME%\lib\sigar
 
-java %GATEWAY_OPTS% -Djava.library.path="%JAVA_LIBRARY_PATH%" -XX:+HeapDumpOnOutOfMemoryError -cp "%GW_HOME%\lib\*" org.kaazing.gateway.server.WindowsMain %*
+rem Verify if the gateway identifier was provided (required by Agorna multiple gateway instances)
 
+set GW_ID=
+
+if NOT "%GATEWAY_OPTS%"=="%GATEWAY_OPTS:org.kaazing.gateway.management.AGRONA_ENABLED=true=%" (
+    if "%GATEWAY_IDENTIFIER%" NEQ "" (
+        set GW_ID="-Dorg.kaazing.gateway.server.GATEWAY_IDENTIFIER=%GATEWAY_IDENTIFIER%"
+        
+        rem Startup the StatsD publisher
+        START CMD /C CALL "scripts/metrics.statsD.start.bat" %GATEWAY_IDENTIFIER%
+    )
+)
+
+rem Startup the gateway
+java %GATEWAY_OPTS% %GW_ID% -Djava.library.path="%JAVA_LIBRARY_PATH%" -XX:+HeapDumpOnOutOfMemoryError -cp "%GW_HOME%\lib\*" org.kaazing.gateway.server.WindowsMain %*

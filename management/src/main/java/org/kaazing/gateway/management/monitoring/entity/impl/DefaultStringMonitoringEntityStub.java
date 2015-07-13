@@ -19,19 +19,28 @@
  * under the License.
  */
 
-package org.kaazing.gateway.management.monitoring.entity.manager.impl;
+package org.kaazing.gateway.management.monitoring.entity.impl;
 
-import static org.junit.Assert.assertTrue;
+import org.kaazing.gateway.management.monitoring.entity.StringMonitoringEntity;
 
-import org.junit.Test;
-import org.kaazing.gateway.management.monitoring.entity.manager.factory.CounterManagerFactory;
+/**
+ * Agrona specific String monitoring entity which uses AtomicStringEntity as the underlying implementation.
+ */
+public class DefaultStringMonitoringEntityStub implements StringMonitoringEntity {
 
-public class CounterManagerFactoryImplTest {
-
-    @Test
-    public void testMakeServiceSessionCounterManager() {
-        CounterManagerFactory counterManagerFactory = new CounterManagerFactoryImpl();
-        Object serviceSessionCounterManager = counterManagerFactory.makeServiceSessionCounterManager(null, null, null);
-        assertTrue(serviceSessionCounterManager instanceof ServiceSessionCounterManagerImpl);
+    @Override
+    public StringMonitoringEntity setValue(String value) {
+        return this;
     }
+
+    @Override
+    public String getValue() {
+        return DEFAULT_VALUE;
+    }
+
+    @Override
+    public StringMonitoringEntity reset() {
+        return this;
+    }
+
 }
