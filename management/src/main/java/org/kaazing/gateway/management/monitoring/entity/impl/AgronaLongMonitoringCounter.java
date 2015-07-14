@@ -21,8 +21,8 @@
 
 package org.kaazing.gateway.management.monitoring.entity.impl;
 
+import org.kaazing.gateway.management.monitoring.agrona.concurrent.AtomicCounter;
 import org.kaazing.gateway.management.monitoring.entity.LongMonitoringCounter;
-import uk.co.real_logic.agrona.concurrent.AtomicCounter;
 
 /**
  * Agrona specific monitoring counter which uses AtomicCounter as the underlying implementation.

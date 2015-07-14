@@ -25,14 +25,13 @@ import java.io.File;
 import java.nio.MappedByteBuffer;
 import java.util.Properties;
 import org.kaazing.gateway.management.agrona.ex.StringsManager;
+import org.kaazing.gateway.management.monitoring.agrona.IoUtil;
+import org.kaazing.gateway.management.monitoring.agrona.concurrent.CountersManager;
+import org.kaazing.gateway.management.monitoring.agrona.concurrent.UnsafeBuffer;
 import org.kaazing.gateway.management.monitoring.configuration.MonitoringEntityFactoryBuilder;
 import org.kaazing.gateway.management.monitoring.entity.factory.MonitoringEntityFactory;
 import org.kaazing.gateway.management.monitoring.entity.impl.AgronaMonitoringEntityFactory;
 import org.kaazing.gateway.util.InternalSystemProperty;
-import uk.co.real_logic.agrona.IoUtil;
-import uk.co.real_logic.agrona.concurrent.CountersManager;
-import uk.co.real_logic.agrona.concurrent.UnsafeBuffer;
-
 /**
  * Agrona implementation for the monitoring entity factory builder.
  */
@@ -44,6 +43,7 @@ public class AgronaMonitoringEntityFactoryBuilder implements MonitoringEntityFac
     private static final String MONITOR_FILE_NAME = "monitor";
     private static final int MONITOR_COUNTER_VALUES_BUFFER_LENGTH = 1024 * 1024;
     private static final int MONITOR_COUNTER_LABELS_BUFFER_LENGTH = 32 * MONITOR_COUNTER_VALUES_BUFFER_LENGTH;
+    private static final int MONITOR_COUNTER_METADATA_BUFFER_LENGTH = 32 * MONITOR_COUNTER_VALUES_BUFFER_LENGTH;
 
     private static final int MONITOR_STRING_VALUES_BUFFER_LENGTH = 32 * 1024 * 1024;
     private static final int MONITOR_STRING_LABELS_BUFFER_LENGTH = MONITOR_STRING_VALUES_BUFFER_LENGTH;
@@ -97,8 +97,9 @@ public class AgronaMonitoringEntityFactoryBuilder implements MonitoringEntityFac
     private void createCountersManager() {
         UnsafeBuffer counterLabelsBuffer = MonitorFileDescriptor.createCounterLabelsBuffer(mappedMonitorFile, metaDataBuffer);
         UnsafeBuffer counterValuesBuffer = MonitorFileDescriptor.createCounterValuesBuffer(mappedMonitorFile, metaDataBuffer);
+        UnsafeBuffer counterMetadataBuffer = MonitorFileDescriptor.createCounterMetadataBuffer(mappedMonitorFile, metaDataBuffer);
 
-        countersManager = new CountersManager(counterLabelsBuffer, counterValuesBuffer);
+        countersManager = new CountersManager(counterLabelsBuffer, counterValuesBuffer, counterMetadataBuffer);
     }
 
     private void createStringsManager() {
@@ -111,7 +112,7 @@ public class AgronaMonitoringEntityFactoryBuilder implements MonitoringEntityFac
     private UnsafeBuffer addMetadataToAgronaFile(MappedByteBuffer mappedMonitorFile) {
         UnsafeBuffer metaDataBuffer = MonitorFileDescriptor.createMetaDataBuffer(mappedMonitorFile);
         MonitorFileDescriptor.fillMetaData(metaDataBuffer, MONITOR_COUNTER_LABELS_BUFFER_LENGTH,
-                MONITOR_COUNTER_VALUES_BUFFER_LENGTH, MONITOR_STRING_LABELS_BUFFER_LENGTH, MONITOR_STRING_VALUES_BUFFER_LENGTH);
+                MONITOR_COUNTER_VALUES_BUFFER_LENGTH, MONITOR_COUNTER_METADATA_BUFFER_LENGTH, MONITOR_STRING_LABELS_BUFFER_LENGTH, MONITOR_STRING_VALUES_BUFFER_LENGTH);
         return metaDataBuffer;
     }
 

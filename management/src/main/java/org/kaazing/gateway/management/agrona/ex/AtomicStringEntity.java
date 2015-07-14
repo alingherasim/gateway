@@ -23,7 +23,7 @@ package org.kaazing.gateway.management.agrona.ex;
 
 import java.nio.ByteOrder;
 
-import uk.co.real_logic.agrona.concurrent.AtomicBuffer;
+import org.kaazing.gateway.management.monitoring.agrona.concurrent.AtomicBuffer;
 
 /**
  * Atomic String monitoring entity that is backed by an {@link AtomicBuffer} that can be read across threads and processes.

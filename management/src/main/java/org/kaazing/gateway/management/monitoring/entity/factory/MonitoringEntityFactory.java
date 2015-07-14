@@ -38,7 +38,7 @@ public interface MonitoringEntityFactory {
      * @param label - the name associated to the counter
      * @return - LongMonitoringCounter
      */
-    LongMonitoringCounter makeLongMonitoringCounter(String name);
+    LongMonitoringCounter makeLongMonitoringCounter(String name, String label);
 
     /**
      * Method returning a StringMonitoringEntity object

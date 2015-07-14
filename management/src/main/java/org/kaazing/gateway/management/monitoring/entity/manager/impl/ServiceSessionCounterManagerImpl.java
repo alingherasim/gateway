@@ -29,13 +29,12 @@ import org.kaazing.gateway.management.monitoring.entity.manager.ServiceSessionCo
 public class ServiceSessionCounterManagerImpl implements
         ServiceSessionCounterManager {
 
-    private static final String SEPARATOR = "-";
-    private static final String CURRENT_NUMBER_OF_SESSIONS = "-current-number-of-sessions";
-    private static final String CURRENT_NUMBER_OF_NATIVE_SESSIONS = "-current-number-of-native-sessions";
-    private static final String CURRENT_NUMBER_OF_EMULATED_SESSIONS = "-current-number-of-emulated-sessions";
-    private static final String CUMULATIVE_NUMBER_OF_SESSIONS = "-cumulative-number-of-sessions";
-    private static final String CUMULATIVE_NUMBER_OF_NATIVE_SESSIONS = "-cumulative-number-of-native-sessions";
-    private static final String CUMULATIVE_NUMBER_OF_EMULATED_SESSIONS = "-cumulative-number-of-emulated-sessions";
+    private static final String CURRENT_NUMBER_OF_SESSIONS = "current-number-of-sessions";
+    private static final String CURRENT_NUMBER_OF_NATIVE_SESSIONS = "current-number-of-native-sessions";
+    private static final String CURRENT_NUMBER_OF_EMULATED_SESSIONS = "current-number-of-emulated-sessions";
+    private static final String CUMULATIVE_NUMBER_OF_SESSIONS = "cumulative-number-of-sessions";
+    private static final String CUMULATIVE_NUMBER_OF_NATIVE_SESSIONS = "cumulative-number-of-native-sessions";
+    private static final String CUMULATIVE_NUMBER_OF_EMULATED_SESSIONS = "cumulative-number-of-emulated-sessions";
     private LongMonitoringCounter numberOfSessionsCounter;
     private LongMonitoringCounter numberOfNativeSessionsCounter;
     private LongMonitoringCounter numberOfEmulatedSessionsCounter;
@@ -56,18 +55,18 @@ public class ServiceSessionCounterManagerImpl implements
 
     @Override
     public void initializeCounters() {
-        numberOfSessionsCounter = monitoringEntityFactory.makeLongMonitoringCounter(gatewayId + SEPARATOR + serviceName
-                + CURRENT_NUMBER_OF_SESSIONS);
-        numberOfNativeSessionsCounter = monitoringEntityFactory.makeLongMonitoringCounter(gatewayId + SEPARATOR + serviceName
-                + CURRENT_NUMBER_OF_NATIVE_SESSIONS);
-        numberOfEmulatedSessionsCounter = monitoringEntityFactory.makeLongMonitoringCounter(gatewayId + SEPARATOR + serviceName
-                + CURRENT_NUMBER_OF_EMULATED_SESSIONS);
-        cumulativeSessionsCounter = monitoringEntityFactory.makeLongMonitoringCounter(gatewayId + SEPARATOR + serviceName
-                + CUMULATIVE_NUMBER_OF_SESSIONS);
-        cumulativeNativeSessionsCounter = monitoringEntityFactory.makeLongMonitoringCounter(gatewayId + SEPARATOR + serviceName
-                + CUMULATIVE_NUMBER_OF_NATIVE_SESSIONS);
-        cumulativeEmulatedSessionsCounter = monitoringEntityFactory.makeLongMonitoringCounter(gatewayId + SEPARATOR + serviceName
-                + CUMULATIVE_NUMBER_OF_EMULATED_SESSIONS);
+        numberOfSessionsCounter = monitoringEntityFactory.makeLongMonitoringCounter(serviceName,
+                gatewayId + CURRENT_NUMBER_OF_SESSIONS);
+        numberOfNativeSessionsCounter = monitoringEntityFactory.makeLongMonitoringCounter(serviceName,
+                gatewayId + CURRENT_NUMBER_OF_NATIVE_SESSIONS);
+        numberOfEmulatedSessionsCounter = monitoringEntityFactory.makeLongMonitoringCounter(serviceName,
+                gatewayId + CURRENT_NUMBER_OF_EMULATED_SESSIONS);
+        cumulativeSessionsCounter = monitoringEntityFactory.makeLongMonitoringCounter(serviceName,
+                gatewayId + CUMULATIVE_NUMBER_OF_SESSIONS);
+        cumulativeNativeSessionsCounter = monitoringEntityFactory.makeLongMonitoringCounter(serviceName,
+                gatewayId + CUMULATIVE_NUMBER_OF_NATIVE_SESSIONS);
+        cumulativeEmulatedSessionsCounter = monitoringEntityFactory.makeLongMonitoringCounter(serviceName,
+                gatewayId + CUMULATIVE_NUMBER_OF_EMULATED_SESSIONS);
     }
 
     @Override

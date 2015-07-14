@@ -22,9 +22,10 @@
 package org.kaazing.gateway.management.monitoring.configuration.impl;
 
 import java.nio.ByteBuffer;
-import uk.co.real_logic.agrona.BitUtil;
-import uk.co.real_logic.agrona.DirectBuffer;
-import uk.co.real_logic.agrona.concurrent.UnsafeBuffer;
+
+import org.kaazing.gateway.management.monitoring.agrona.BitUtil;
+import org.kaazing.gateway.management.monitoring.agrona.DirectBuffer;
+import org.kaazing.gateway.management.monitoring.agrona.concurrent.UnsafeBuffer;
 
 /**
  * Helper class used to create the initial configuration for Agrona
@@ -37,8 +38,9 @@ public final class MonitorFileDescriptor {
 
     private static final int COUNTER_LABELS_BUFFER_LENGTH_OFFSET = 0;
     private static final int COUNTER_VALUES_BUFFER_LENGTH_OFFSET = COUNTER_LABELS_BUFFER_LENGTH_OFFSET + BitUtil.SIZE_OF_INT;
+    private static final int COUNTER_METADATA_BUFFER_LENGTH_OFFSET = COUNTER_VALUES_BUFFER_LENGTH_OFFSET + BitUtil.SIZE_OF_INT;
 
-    private static final int STRING_LABELS_BUFFER_LENGTH_OFFSET = COUNTER_VALUES_BUFFER_LENGTH_OFFSET + BitUtil.SIZE_OF_INT;
+    private static final int STRING_LABELS_BUFFER_LENGTH_OFFSET = COUNTER_METADATA_BUFFER_LENGTH_OFFSET + BitUtil.SIZE_OF_INT;
     private static final int STRING_VALUES_BUFFER_LENGTH_OFFSET = STRING_LABELS_BUFFER_LENGTH_OFFSET + BitUtil.SIZE_OF_INT;
 
     private static final int META_DATA_LENGTH = STRING_VALUES_BUFFER_LENGTH_OFFSET + BitUtil.SIZE_OF_INT;
@@ -103,6 +105,15 @@ public final class MonitorFileDescriptor {
     }
 
     /**
+     * Computes the offset for the counter metadata buffer
+     * @param baseOffset - the base offset of the buffer
+     * @return the counter metadata buffer offset
+     */
+    public static int counterMetadataBufferLengthOffset(final int baseOffset) {
+        return baseOffset + META_DATA_OFFSET + COUNTER_METADATA_BUFFER_LENGTH_OFFSET;
+    }
+
+    /**
      * Creates the meta data buffer
      * @param buffer - the underlying byte buffer
      * @return the meta data buffer
@@ -120,10 +131,11 @@ public final class MonitorFileDescriptor {
      * @param stringValuesBufferLength - the length of the strings values buffer
      */
     public static void fillMetaData(final UnsafeBuffer monitorMetaDataBuffer, final int monitorLabelsBufferLength,
-        final int monitorValuesBufferLength, final int stringLabelsBufferLength, final int stringValuesBufferLength) {
+        final int monitorValuesBufferLength, final int monitorMetadataBufferLength, final int stringLabelsBufferLength, final int stringValuesBufferLength) {
         monitorMetaDataBuffer.putInt(monitorVersionOffset(0), MONITOR_VERSION);
         monitorMetaDataBuffer.putInt(counterLabelsBufferLengthOffset(0), monitorLabelsBufferLength);
         monitorMetaDataBuffer.putInt(counterValuesBufferLengthOffset(0), monitorValuesBufferLength);
+        monitorMetaDataBuffer.putInt(counterMetadataBufferLengthOffset(0), monitorMetadataBufferLength);
         monitorMetaDataBuffer.putInt(stringLabelsBufferLengthOffset(0), stringLabelsBufferLength);
         monitorMetaDataBuffer.putInt(stringValuesBufferLengthOffset(0), stringValuesBufferLength);
     }
@@ -153,7 +165,20 @@ public final class MonitorFileDescriptor {
 
         return new UnsafeBuffer(buffer, offset, length);
     }
+    /**
+     * Creates the counter metadata buffer
+     * @param buffer - the underlying byte buffer
+     * @param metaDataBuffer - the meta data buffer from which we compute the offset
+     * @return the counter metadata buffer
+     */
+    public static UnsafeBuffer createCounterMetadataBuffer(final ByteBuffer buffer, final DirectBuffer metaDataBuffer) {
+        int labelsBufferLength = metaDataBuffer.getInt(counterLabelsBufferLengthOffset(0));
+        int valuesBufferLength = metaDataBuffer.getInt(counterValuesBufferLengthOffset(0));
+        final int offset = END_OF_METADATA + labelsBufferLength + valuesBufferLength;
+        final int length = metaDataBuffer.getInt(counterMetadataBufferLengthOffset(0));
 
+        return new UnsafeBuffer(buffer, offset, length);
+    }
     /**
      * Creates the String monitoring entity labels buffer
      * @param buffer - the underlying byte buffer

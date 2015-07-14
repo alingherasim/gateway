@@ -21,14 +21,14 @@
 
 package org.kaazing.gateway.management.agrona.ex;
 
-import static uk.co.real_logic.agrona.BitUtil.SIZE_OF_INT;
+import static org.kaazing.gateway.management.monitoring.agrona.BitUtil.SIZE_OF_INT;
 
 import java.nio.ByteOrder;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.function.BiConsumer;
 
-import uk.co.real_logic.agrona.concurrent.AtomicBuffer;
+import org.kaazing.gateway.management.monitoring.agrona.concurrent.AtomicBuffer;
 
 /**
  * Manages the allocation and freeing of String monitoring entities.

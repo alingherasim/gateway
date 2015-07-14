@@ -26,15 +26,14 @@ import java.nio.MappedByteBuffer;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.kaazing.gateway.management.monitoring.agrona.IoUtil;
+import org.kaazing.gateway.management.monitoring.agrona.concurrent.AtomicCounter;
+import org.kaazing.gateway.management.monitoring.agrona.concurrent.CountersManager;
 import org.kaazing.gateway.management.agrona.ex.AtomicStringEntity;
 import org.kaazing.gateway.management.agrona.ex.StringsManager;
 import org.kaazing.gateway.management.monitoring.entity.LongMonitoringCounter;
 import org.kaazing.gateway.management.monitoring.entity.StringMonitoringEntity;
 import org.kaazing.gateway.management.monitoring.entity.factory.MonitoringEntityFactory;
-
-import uk.co.real_logic.agrona.IoUtil;
-import uk.co.real_logic.agrona.concurrent.AtomicCounter;
-import uk.co.real_logic.agrona.concurrent.CountersManager;
 
 /**
  * MonitoringEntityFactory which provides Agrona specific monitoring entities
@@ -59,10 +58,10 @@ public class AgronaMonitoringEntityFactory implements MonitoringEntityFactory {
     }
 
     @Override
-    public LongMonitoringCounter makeLongMonitoringCounter(String name) {
+    public LongMonitoringCounter makeLongMonitoringCounter(String name, String label) {
         // We create the new AtomicCounter using the CountersManager and we also add it to the list of counters
         // in order to close them when needed.
-        AtomicCounter counter = countersManager.newCounter(name);
+        AtomicCounter counter = countersManager.newCounter(name, label);
         counters.add(counter);
 
         LongMonitoringCounter longMonitoringCounter = new AgronaLongMonitoringCounter(counter);
